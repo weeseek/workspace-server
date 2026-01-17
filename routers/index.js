@@ -1,8 +1,9 @@
 const KoaRouter = require('koa-router');
 const fs = require('fs');
 const path = require('path');
+const Router = require("koa-router");
 
-const router = new KoaRouter();
+const router = new Router({prefix: '/api'});
 
 const modulesDir = path.join(__dirname, 'modules');
 fs.readdirSync(modulesDir).forEach(file => {

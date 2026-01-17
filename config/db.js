@@ -1,13 +1,16 @@
-const env = require('./env');
-const config = require('./config');
+const path = require('path')
+const {Sequelize} = require('sequelize');
+const sqlite3 = require('sqlite3').verbose();
+const dotenv = require('dotenv');
 
-module.exports = {
-    connect: () => {
-        const dbConfig = env[config.environment];
-        // 假设使用 mongoose 连接数据库
-        const mongoose = require('mongoose');
-        mongoose.connect(`mongodb://${dbConfig.dbHost}:${dbConfig.dbPort}/${dbConfig.dbName}`)
-            .then(() => console.log('Connected to database'))
-            .catch(err => console.error('Database connection error:', err));
-    }
-};
+dotenv.config();
+
+const sequelize = new Sequelize({
+    host: process.env.DB_HOST,
+    dialect: 'sqlite',
+    dialectModule: sqlite3,
+    storage: path.join(__dirname, process.env.DB_STORAGE),
+    logging: false
+});
+
+module.exports = sequelize;
