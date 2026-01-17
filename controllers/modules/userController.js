@@ -3,45 +3,46 @@ const userService = require('../../services/modules/userService');
 const { AppError } = require('../../utils/errorHandler');
 const { generateTokens } = require('../../utils/jwt');
 
+// 直接使用模型的toJSON方法格式化用户信息，不再需要自定义formatUserResponse函数
+
+/**
+ * 统一响应格式
+ * @param {Object} ctx - Koa上下文对象
+ * @param {number} statusCode - HTTP状态码
+ * @param {number} code - 业务状态码
+ * @param {string} message - 响应消息
+ * @param {Object|null} data - 响应数据
+ */
+const sendResponse = (ctx, statusCode, code, message, data = null) => {
+    ctx.status = statusCode;
+    ctx.body = {
+        code,
+        message,
+        data
+    };
+};
+
 async function getUserById(ctx) {
     const id = ctx.params.id;
     const user = await User.findByPk(id);
     if (user) {
-        ctx.body = user;
+        sendResponse(ctx, 200, 0, 'User retrieved successfully', { user: user.toJSON() });
     } else {
-        throw new AppError(404, 'User not found');
+        sendResponse(ctx, 404, 404, 'User not found');
     }
 }
 
 // 受保护的路由：获取当前登录用户信息
 async function getCurrentUser(ctx) {
-    console.log('当前用户信息:', ctx.state.user);
-    
     // 从ctx.state.user获取用户ID
     const userId = ctx.state.user.userId;
     
     // 查询用户信息
     const user = await User.findByPk(userId);
     if (user) {
-        ctx.status = 200;
-        ctx.body = {
-            message: 'User information retrieved successfully',
-            user: {
-                id: user.id,
-                username: user.username,
-                email: user.email,
-                nickname: user.nickname,
-                avatar: user.avatar,
-                gender: user.gender,
-                birthday: user.birthday,
-                phone: user.phone,
-                status: user.status,
-                lastLoginAt: user.lastLoginAt,
-                createdAt: user.createdAt
-            }
-        };
+        sendResponse(ctx, 200, 0, 'User information retrieved successfully', { user: user.toJSON() });
     } else {
-        throw new AppError(404, 'User not found');
+        sendResponse(ctx, 404, 404, 'User not found');
     }
 }
 
@@ -53,7 +54,8 @@ async function registerUser(ctx) {
         try {
             body = JSON.parse(body);
         } catch (error) {
-            throw new AppError(400, 'Invalid JSON format in request body');
+            sendResponse(ctx, 400, 400, 'Invalid JSON format in request body');
+            return;
         }
     }
     
@@ -62,7 +64,8 @@ async function registerUser(ctx) {
     const password = body.password;
     
     if (!username || !email || !password) {
-        throw new AppError(400, 'Username, email, and password are required');
+        sendResponse(ctx, 400, 400, 'Username, email, and password are required');
+        return;
     }
     
     // 准备额外的字段
@@ -75,22 +78,7 @@ async function registerUser(ctx) {
     
     const user = await userService.registerUser(username, email, password, additionalFields);
     
-    ctx.status = 201;
-    ctx.body = {
-        message: 'User registered successfully',
-        user: {
-            id: user.id,
-            username: user.username,
-            email: user.email,
-            nickname: user.nickname,
-            avatar: user.avatar,
-            gender: user.gender,
-            birthday: user.birthday,
-            phone: user.phone,
-            status: user.status,
-            createdAt: user.createdAt
-        }
-    };
+    sendResponse(ctx, 201, 0, 'User registered successfully', { user: user.toJSON() });
 }
 
 async function loginUser(ctx) {
@@ -101,7 +89,8 @@ async function loginUser(ctx) {
         try {
             body = JSON.parse(body);
         } catch (error) {
-            throw new AppError(400, 'Invalid JSON format in request body');
+            sendResponse(ctx, 400, 400, 'Invalid JSON format in request body');
+            return;
         }
     }
     
@@ -109,7 +98,8 @@ async function loginUser(ctx) {
     const password = body.password;
     
     if (!email || !password) {
-        throw new AppError(400, 'Email and password are required');
+        sendResponse(ctx, 400, 400, 'Email and password are required');
+        return;
     }
     
     try {
@@ -123,24 +113,12 @@ async function loginUser(ctx) {
             email: user.email
         });
         
-        ctx.status = 200;
-        ctx.body = {
-            message: 'Login successful',
-            user: {
-                id: user.id,
-                username: user.username,
-                email: user.email,
-                nickname: user.nickname,
-                avatar: user.avatar,
-                gender: user.gender,
-                birthday: user.birthday,
-                phone: user.phone,
-                status: user.status
-            },
+        sendResponse(ctx, 200, 0, 'Login successful', {
+            user: user.toJSON(),
             tokens
-        };
+        });
     } catch (error) {
-        throw new AppError(401, error.message);
+        sendResponse(ctx, 401, 401, error.message || 'Authentication failed');
     }
 }
 

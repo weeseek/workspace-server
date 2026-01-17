@@ -65,4 +65,14 @@ const User = sequelize.define('User', {
     timestamps: true
 });
 
+// 在模型原型上定义toJSON方法，用于自定义JSON序列化
+User.prototype.toJSON = function() {
+    const values = this.get();
+    
+    // 删除敏感字段
+    delete values.password;
+    
+    return values;
+};
+
 module.exports = User;
