@@ -4,8 +4,8 @@ const Router = require('koa-router');
 const userController_1 = require("../../controllers/modules/userController");
 const router = new Router({ prefix: '/api/users' });
 const typedRouter = router;
-typedRouter.get('/', (ctx) => {
-    ctx.body = 'User module route';
+typedRouter.get('/', async (ctx) => {
+    await (0, userController_1.getUsers)(ctx);
 });
 typedRouter.get('/me', async (ctx) => {
     await (0, userController_1.getCurrentUser)(ctx);
@@ -18,6 +18,12 @@ typedRouter.post('/register', async (ctx) => {
 });
 typedRouter.post('/login', async (ctx) => {
     await (0, userController_1.loginUser)(ctx);
+});
+typedRouter.put('/me', async (ctx) => {
+    await (0, userController_1.updateUser)(ctx);
+});
+typedRouter.delete('/me', async (ctx) => {
+    await (0, userController_1.deleteUser)(ctx);
 });
 exports.default = router;
 //# sourceMappingURL=userRoute.js.map
