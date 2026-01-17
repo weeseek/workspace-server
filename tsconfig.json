@@ -1,0 +1,51 @@
+{
+  "compilerOptions": {
+    /* Language and Environment */
+    "target": "es2020",                                /* Set to ES2020 for modern Node.js support */
+    "lib": ["es2020"],                                 /* Include ES2020 library */
+    "experimentalDecorators": true,                     /* Enable decorator support for Sequelize */
+    "emitDecoratorMetadata": true,                      /* Emit metadata for decorators */
+    "useDefineForClassFields": true,                    /* Use standard class fields */
+
+    /* Modules */
+    "module": "commonjs",                              /* Generate CommonJS modules for Node.js */
+    "moduleResolution": "node",                        /* Use Node.js module resolution */
+    "rootDir": "./",                                  /* Set root directory */
+    "resolveJsonModule": true,                          /* Allow importing JSON files */
+    "allowImportingTsExtensions": false,                /* Disallow importing with .ts extensions in Node.js */
+
+    /* JavaScript Support */
+    "allowJs": true,                                    /* Allow JavaScript files in project */
+    "checkJs": false,                                   /* Don't check JavaScript files for type errors */
+    "maxNodeModuleJsDepth": 1,                          /* Limit checking of node_modules JavaScript files */
+
+    /* Emit */
+    "outDir": "./dist",                                /* Output compiled files to dist directory */
+    "sourceMap": true,                                  /* Generate source maps for debugging in Node.js */
+    "declaration": true,                                /* Generate declaration files for TypeScript users */
+    "declarationMap": true,                             /* Generate maps for declaration files */
+    "removeComments": true,                             /* Remove comments from output to reduce file size */
+    "noEmitOnError": true,                              /* Don't emit if there are errors */
+    "importHelpers": false,                              /* Don't use tslib helpers for Node.js */
+    "downlevelIteration": false,                        /* Don't downlevel iteration for modern Node.js */
+    "isolatedModules": false,                           /* Don't require isolated modules for Node.js */
+    "verbatimModuleSyntax": false,                      /* Use standard CommonJS module syntax */
+
+    /* Interop Constraints */
+    "esModuleInterop": true,                             /* Enable ES module interop */
+    "forceConsistentCasingInFileNames": true,            /* Enforce consistent casing in imports */
+    "allowSyntheticDefaultImports": true,               /* Allow synthetic default imports */
+
+    /* Type Checking */
+    "strict": true,                                      /* Enable strict type checking */
+    "noUnusedLocals": false,                            /* Don't error on unused locals */
+    "noUnusedParameters": false,                        /* Don't error on unused parameters */
+    "noImplicitReturns": true,                          /* Require explicit returns */
+    "noFallthroughCasesInSwitch": true,                 /* Don't allow fallthrough in switches */
+
+    /* Completeness */
+    "skipLibCheck": true                                 /* Skip checking declaration files */
+  },
+  "include": ["**/*.ts", "**/*.js"],                   /* Include all TypeScript and JavaScript files */
+  "exclude": ["node_modules", "dist"]                 /* Exclude node_modules and dist */
+}

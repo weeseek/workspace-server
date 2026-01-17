@@ -1,0 +1,23 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const Router = require('koa-router');
+const userController_1 = require("../../controllers/modules/userController");
+const router = new Router({ prefix: '/api/users' });
+const typedRouter = router;
+typedRouter.get('/', (ctx) => {
+    ctx.body = 'User module route';
+});
+typedRouter.get('/me', async (ctx) => {
+    await (0, userController_1.getCurrentUser)(ctx);
+});
+typedRouter.get('/:id', async (ctx) => {
+    await (0, userController_1.getUserById)(ctx);
+});
+typedRouter.post('/register', async (ctx) => {
+    await (0, userController_1.registerUser)(ctx);
+});
+typedRouter.post('/login', async (ctx) => {
+    await (0, userController_1.loginUser)(ctx);
+});
+exports.default = router;
+//# sourceMappingURL=userRoute.js.map
