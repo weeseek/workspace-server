@@ -16,35 +16,48 @@ class AppError extends Error {
 
 // 错误处理函数
 const handleError = (err, ctx) => {
-    let { statusCode, message } = err;
+    console.log('=== 进入错误处理函数 ===');
+    console.log('原始错误对象:', err);
+    console.log('错误名称:', err.name);
+    console.log('错误类型:', typeof err);
+    console.log('是否为AppError实例:', err instanceof AppError);
+    
+    let statusCode = err.statusCode;
+    let message = err.message;
+    
+    console.log('从错误对象提取的statusCode:', statusCode);
+    console.log('从错误对象提取的message:', message);
     
     // 默认值
-    if (!statusCode) statusCode = 500;
-    if (!message) message = 'Internal Server Error';
+    if (!statusCode) {
+        statusCode = 500;
+        console.log('使用默认statusCode:', statusCode);
+    }
+    if (!message) {
+        message = 'Internal Server Error';
+        console.log('使用默认message:', message);
+    }
     
     // 生产环境下隐藏详细错误信息
     if (process.env.NODE_ENV === 'production' && !err.isOperational) {
         statusCode = 500;
         message = 'Internal Server Error';
+        console.log('生产环境下使用默认错误信息');
     }
     
     // 设置响应
+    console.log('设置响应状态码:', statusCode);
     ctx.status = statusCode;
+    console.log('设置响应体:', {
+        status: statusCode >= 500 ? 'error' : 'fail',
+        message
+    });
     ctx.body = {
         status: statusCode >= 500 ? 'error' : 'fail',
-        message,
-        ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
+        message
     };
     
-    // 记录错误日志
-    console.error('Error:', {
-        statusCode,
-        message,
-        stack: err.stack,
-        url: ctx.request.url,
-        method: ctx.request.method,
-        ip: ctx.ip
-    });
+    console.log('=== 错误处理函数结束 ===');
 };
 
 // 处理Sequelize错误

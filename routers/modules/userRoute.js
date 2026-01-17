@@ -8,6 +8,11 @@ router.get('/', (ctx) => {
     ctx.body = 'User module route';
 });
 
+// 受保护的路由：获取当前登录用户信息（现在通过全局JWT中间件验证）
+router.get('/me', async ctx => {
+    await userController.getCurrentUser(ctx);
+});
+
 router.get('/:id', async ctx => {
     await userController.getUserById(ctx);
 });

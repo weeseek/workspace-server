@@ -13,6 +13,38 @@ async function getUserById(ctx) {
     }
 }
 
+// 受保护的路由：获取当前登录用户信息
+async function getCurrentUser(ctx) {
+    console.log('当前用户信息:', ctx.state.user);
+    
+    // 从ctx.state.user获取用户ID
+    const userId = ctx.state.user.userId;
+    
+    // 查询用户信息
+    const user = await User.findByPk(userId);
+    if (user) {
+        ctx.status = 200;
+        ctx.body = {
+            message: 'User information retrieved successfully',
+            user: {
+                id: user.id,
+                username: user.username,
+                email: user.email,
+                nickname: user.nickname,
+                avatar: user.avatar,
+                gender: user.gender,
+                birthday: user.birthday,
+                phone: user.phone,
+                status: user.status,
+                lastLoginAt: user.lastLoginAt,
+                createdAt: user.createdAt
+            }
+        };
+    } else {
+        throw new AppError(404, 'User not found');
+    }
+}
+
 async function registerUser(ctx) {
     let body = ctx.request.body;
     
@@ -115,5 +147,6 @@ async function loginUser(ctx) {
 module.exports = {
     getUserById,
     registerUser,
-    loginUser
+    loginUser,
+    getCurrentUser
 };
