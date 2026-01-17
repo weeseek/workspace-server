@@ -1,0 +1,26 @@
+{
+  "name": "workspace-server",
+  "version": "1.0.0",
+  "description": "工作站服务端",
+  "main": "app.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/weeseek/workspace-server.git"
+  },
+  "keywords": [
+    "工作站"
+  ],
+  "author": "baosc@outlook.com",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/weeseek/workspace-server/issues"
+  },
+  "homepage": "https://github.com/weeseek/workspace-server#readme",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "dotenv": "^17.2.3",
+    "koa": "^3.1.1",
+    "koa-router": "^14.0.0"
+  }
+}
