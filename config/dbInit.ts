@@ -2,6 +2,7 @@ import { sequelize, testConnection } from './db';
 
 // 导入所有模型，确保它们被注册到Sequelize实例中
 import '../models/modules/User';
+import '../models/modules/Menu';
 
 /**
  * 初始化数据库
