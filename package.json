@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node dist/app.js",
     "start:dev": "ts-node app.ts",
-    "build": "tsc",
+    "build": "tsc && cp package.json dist/",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "typecheck": "tsc --noEmit"
@@ -47,14 +47,19 @@
     "@types/koa-router": "^7.4.8",
     "@types/node": "^22.11.0",
     "@types/sequelize": "^4.28.20",
+    "@types/swagger-jsdoc": "^6.0.4",
     "@typescript-eslint/eslint-plugin": "^8.53.0",
     "@typescript-eslint/parser": "^8.53.0",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.1",
     "joi": "^18.0.2",
+    "koa-static": "^5.0.0",
     "nodemon": "^3.1.11",
     "prettier": "^3.4.2",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-dist": "^5.31.0",
+    "swagger-ui-koa": "^0.0.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.3"
   }

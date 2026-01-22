@@ -23,8 +23,13 @@ async function startApp(): Promise<void> {
         registerRoutes(app);
         
         console.log('Step 5: Starting server...');
-        app.listen(config.port, () => {
-            console.log(`🚀 Server running on http://localhost:${config.port}`);
+        // 监听所有网络接口，允许外网访问
+        // 使用对象参数形式避免 TypeScript 类型错误
+        app.listen({
+            port: config.port,
+            host: '0.0.0.0'
+        }, () => {
+            console.log(`🚀 Server running on http://0.0.0.0:${config.port}`);
             console.log(`📝 Environment: ${config.environment}`);
         });
     } catch (error) {

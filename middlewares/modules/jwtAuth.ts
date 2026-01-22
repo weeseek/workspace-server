@@ -21,6 +21,10 @@ const whiteList: RouteRule[] = [
     { method: 'GET', path: /^\/api\/users$/ },
     // 支持通配符路由 - 使用正则表达式匹配数字ID
     { method: 'GET', path: /^\/api\/users\/\d+$/ }, // 匹配 /api/users/1, /api/users/2 等
+    // Swagger 相关路由 - 新地址 /api/docs
+    { method: 'GET', path: '/api/docs' },
+    { method: 'GET', path: '/api/docs.json' },
+    { method: 'GET', path: '/health' },
     // 注意：/api/users/me 不在白名单中，需要JWT验证
 ];
 
@@ -31,11 +35,21 @@ const excludeRoutes: RouteRule[] = [
 
 // 检查请求是否在白名单中
 const isInWhiteList = (ctx: Context): boolean => {
-    const { method, path } = ctx.request;
+    let { method, path } = ctx.request;
+    
+    console.log('检查请求是否在白名单中:', method, path);
+    
+    // 对 HEAD 请求特殊处理，转换为 GET 方法进行白名单检查
+    // 因为 HEAD 请求通常是用来检查资源是否存在，和 GET 请求的权限要求一致
+    const originalMethod = method;
+    if (method === 'HEAD') {
+        method = 'GET';
+        console.log('将 HEAD 请求转换为 GET 请求进行白名单检查');
+    }
     
     // 首先检查是否在排除列表中
     const isExcluded = excludeRoutes.some(item => {
-        const methodMatch = item.method === method;
+        const methodMatch = item.method === originalMethod;
         if (!methodMatch) return false;
         
         if (typeof item.path === 'string') {
@@ -48,12 +62,12 @@ const isInWhiteList = (ctx: Context): boolean => {
     });
     
     if (isExcluded) {
-        console.log('请求在排除列表中，需要JWT验证:', method, path);
+        console.log('请求在排除列表中，需要JWT验证:', originalMethod, path);
         return false;
     }
     
     // 然后检查是否在白名单中
-    return whiteList.some(item => {
+    const isInList = whiteList.some(item => {
         // 检查方法是否匹配
         const methodMatch = item.method === method;
         
@@ -70,6 +84,14 @@ const isInWhiteList = (ctx: Context): boolean => {
         
         return false;
     });
+    
+    if (isInList) {
+        console.log('请求在白名单中，跳过JWT验证:', originalMethod, path);
+    } else {
+        console.log('请求不在白名单中，需要JWT验证:', originalMethod, path);
+    }
+    
+    return isInList;
 };
 
 const jwtAuth = async (ctx: Context, next: Next): Promise<void> => {
