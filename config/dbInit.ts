@@ -1,14 +1,13 @@
 import { sequelize, testConnection } from './db';
 
-// 导入所有模型，确保它们被注册到Sequelize实例中
-import '../models/modules/User';
-import '../models/modules/Menu';
+// 只导入Tenant模型，因为它是主数据库中的唯一模型
+import '../models/modules/Tenant';
 
 /**
  * 初始化数据库
  * - 测试数据库连接
- * - 同步数据库表
- * - 加载所有模型
+ * - 同步主数据库表（只包含Tenant模型）
+ * - 加载主数据库模型
  * @returns {Promise<boolean>} 初始化是否成功
  */
 async function initDatabase(): Promise<boolean> {
@@ -16,13 +15,13 @@ async function initDatabase(): Promise<boolean> {
         // 测试数据库连接
         await testConnection();
         
-        // 同步数据库
+        // 只同步主数据库（包含Tenant模型）
         await sequelize.sync({ force: false });
-        console.log('✅ Database synchronized');
+        console.log('✅ Main database synchronized');
         
         return true;
     } catch (error) {
-        console.error('❌ Failed to initialize database:', (error as Error).message);
+        console.error('❌ Failed to initialize main database:', (error as Error).message);
         throw error;
     }
 }

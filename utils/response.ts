@@ -64,6 +64,15 @@ export const sendUnauthorized = (ctx: Context, message: string = 'Unauthorized')
 };
 
 /**
+ * 权限不足响应
+ * @param {Context} ctx - Koa上下文对象
+ * @param {string} message - 响应消息
+ */
+export const sendForbidden = (ctx: Context, message: string = 'Forbidden'): void => {
+    sendResponse(ctx, 403, 403, message);
+};
+
+/**
  * 资源不存在响应
  * @param {Context} ctx - Koa上下文对象
  * @param {string} message - 响应消息

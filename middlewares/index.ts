@@ -34,8 +34,18 @@ const loadMiddlewareModules = (): MiddlewareModules => {
             const middlewarePath = path.join(modulesDir, file);
             const middlewareModule = require(middlewarePath);
             
-            // 处理ES模块的默认导出：如果是默认导出，使用.default属性获取实际函数
-            const middleware = middlewareModule.default || middlewareModule;
+            // 处理中间件导出：
+            // 1. 如果有默认导出，使用默认导出
+            // 2. 如果没有默认导出，但有同名的命名导出，使用命名导出
+            // 3. 否则使用整个模块（兼容CommonJS导出）
+            let middleware = middlewareModule.default;
+            if (!middleware && middlewareModule[middlewareName]) {
+                middleware = middlewareModule[middlewareName];
+            }
+            if (!middleware) {
+                middleware = middlewareModule;
+            }
+            
             middlewares[middlewareName] = middleware;
             console.log(`✓ Loaded middleware: ${middlewareName}`);
         }
@@ -70,7 +80,12 @@ export const configureMiddlewares = (app: Application): void => {
         app.use(middlewares.jwtAuth);
     }
     
-    // 5. 全局错误处理中间件
+    // 5. 租户中间件（用于获取租户ID并添加到上下文中）
+    if (middlewares.tenantMiddleware) {
+        app.use(middlewares.tenantMiddleware);
+    }
+    
+    // 6. 全局错误处理中间件
     // 注意：Koa v3支持传统的(ctx, next)中间件签名
     // 使用类型断言来适配TypeScript类型定义
     app.use(((async (ctx: Context, next: Next) => {

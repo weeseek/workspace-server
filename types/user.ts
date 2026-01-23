@@ -7,6 +7,7 @@ export interface RegisterRequestBody {
     username: string;
     email: string;
     password: string;
+    tenantId: string;
     nickname?: string | null;
     avatar?: string | null;
     gender?: 'male' | 'female' | 'other' | null;

@@ -14,6 +14,7 @@ interface UserAttributes {
     phone?: string | null;
     status: 'active' | 'inactive' | 'banned';
     lastLoginAt?: Date | null;
+    tenantId: string;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -107,6 +108,15 @@ User.init({
         type: DataTypes.DATE,
         allowNull: true,
         defaultValue: null
+    },
+    tenantId: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+            notEmpty: {
+                msg: 'Tenant ID cannot be empty'
+            }
+        }
     },
     createdAt: {
         type: DataTypes.DATE,

@@ -20,6 +20,21 @@ export async function createMenu(ctx: Context): Promise<void> {
         }
     }
     
+    // 从上下文获取租户ID和应用ID
+    body.tenantId = body.tenantId || ctx.state.tenantId;
+    body.appId = body.appId || ctx.query.appId;
+    
+    // 验证必要参数
+    if (!body.tenantId) {
+        sendClientError(ctx, 'Tenant ID is required');
+        return;
+    }
+    
+    if (!body.appId) {
+        sendClientError(ctx, 'App ID is required');
+        return;
+    }
+    
     // 验证菜单类型
     if (body.type && !Object.values(MenuType).includes(body.type)) {
         sendClientError(ctx, 'Invalid menu type. Must be one of: node, page, link');
@@ -41,6 +56,21 @@ export async function createMenu(ctx: Context): Promise<void> {
 export async function getMenus(ctx: Context): Promise<void> {
     const query = ctx.query as any;
     
+    // 从上下文获取租户ID和应用ID
+    const tenantId = ctx.state.tenantId;
+    const appId = query.appId;
+    
+    // 验证必要参数
+    if (!tenantId) {
+        sendClientError(ctx, 'Tenant ID is required');
+        return;
+    }
+    
+    if (!appId) {
+        sendClientError(ctx, 'App ID is required');
+        return;
+    }
+    
     // 解析查询参数
     const name = query.name || '';
     const type = query.type as MenuType | undefined;
@@ -48,7 +78,7 @@ export async function getMenus(ctx: Context): Promise<void> {
     const withChildren = query.withChildren !== 'false';
     
     try {
-        const menus = await getMenusService(name, type, status, withChildren);
+        const menus = await getMenusService(tenantId, appId, name, type, status, withChildren);
         
         // 转换为JSON格式
         const menusData = menus.map(menu => menu.toJSON());
@@ -66,11 +96,26 @@ export async function getMenus(ctx: Context): Promise<void> {
 export async function getMenuTree(ctx: Context): Promise<void> {
     const query = ctx.query as any;
     
+    // 从上下文获取租户ID和应用ID
+    const tenantId = ctx.state.tenantId;
+    const appId = query.appId;
+    
+    // 验证必要参数
+    if (!tenantId) {
+        sendClientError(ctx, 'Tenant ID is required');
+        return;
+    }
+    
+    if (!appId) {
+        sendClientError(ctx, 'App ID is required');
+        return;
+    }
+    
     // 解析查询参数
     const status = query.status as 'active' | 'inactive' || 'active';
     
     try {
-        const menuTree = await getMenuTreeService(status);
+        const menuTree = await getMenuTreeService(tenantId, appId, status);
         
         // 转换为JSON格式
         const menuTreeData = menuTree.map(menu => menu.toJSON());
@@ -93,11 +138,26 @@ export async function getMenuById(ctx: Context): Promise<void> {
         return;
     }
     
+    // 从上下文获取租户ID和应用ID
+    const tenantId = ctx.state.tenantId;
+    const appId = Array.isArray(ctx.query.appId) ? ctx.query.appId[0] : ctx.query.appId;
+    
+    // 验证必要参数
+    if (!tenantId) {
+        sendClientError(ctx, 'Tenant ID is required');
+        return;
+    }
+    
+    if (!appId) {
+        sendClientError(ctx, 'App ID is required');
+        return;
+    }
+    
     const query = ctx.query as any;
     const withChildren = query.withChildren !== 'false';
     
     try {
-        const menu = await getMenuByIdService(id, withChildren);
+        const menu = await getMenuByIdService(tenantId, appId, id, withChildren);
         
         if (menu) {
             sendSuccess(ctx, 'Menu retrieved successfully', { menu: menu.toJSON() });
@@ -133,6 +193,21 @@ export async function updateMenu(ctx: Context): Promise<void> {
         }
     }
     
+    // 从上下文获取租户ID和应用ID
+    const tenantId = ctx.state.tenantId;
+    const appId = ctx.query.appId || body.appId;
+    
+    // 验证必要参数
+    if (!tenantId) {
+        sendClientError(ctx, 'Tenant ID is required');
+        return;
+    }
+    
+    if (!appId) {
+        sendClientError(ctx, 'App ID is required');
+        return;
+    }
+    
     // 验证菜单类型
     if (body.type && !Object.values(MenuType).includes(body.type)) {
         sendClientError(ctx, 'Invalid menu type. Must be one of: node, page, link');
@@ -140,7 +215,7 @@ export async function updateMenu(ctx: Context): Promise<void> {
     }
     
     try {
-        const menu = await updateMenuService(id, body);
+        const menu = await updateMenuService(tenantId, appId, id, body);
         sendSuccess(ctx, 'Menu updated successfully', { menu: menu.toJSON() });
     } catch (error) {
         sendClientError(ctx, (error as Error).message || 'Failed to update menu');
@@ -159,8 +234,23 @@ export async function deleteMenu(ctx: Context): Promise<void> {
         return;
     }
     
+    // 从上下文获取租户ID和应用ID
+    const tenantId = ctx.state.tenantId;
+    const appId = Array.isArray(ctx.query.appId) ? ctx.query.appId[0] : ctx.query.appId;
+    
+    // 验证必要参数
+    if (!tenantId) {
+        sendClientError(ctx, 'Tenant ID is required');
+        return;
+    }
+    
+    if (!appId) {
+        sendClientError(ctx, 'App ID is required');
+        return;
+    }
+    
     try {
-        await deleteMenuService(id);
+        await deleteMenuService(tenantId, appId, id);
         sendSuccess(ctx, 'Menu deleted successfully');
     } catch (error) {
         sendClientError(ctx, (error as Error).message || 'Failed to delete menu');

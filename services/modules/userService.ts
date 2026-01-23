@@ -17,6 +17,7 @@ interface AdditionalUserFields {
  * @param {string} username - 用户名
  * @param {string} email - 邮箱
  * @param {string} password - 密码
+ * @param {string} tenantId - 租户ID
  * @param {AdditionalUserFields} additionalFields - 额外字段
  * @returns {Promise<User>} 创建的用户对象
  */
@@ -24,6 +25,7 @@ export const registerUser = async (
     username: string,
     email: string,
     password: string,
+    tenantId: string,
     additionalFields: AdditionalUserFields = {}
 ): Promise<User> => {
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -31,6 +33,7 @@ export const registerUser = async (
         username,
         email,
         password: hashedPassword,
+        tenantId,
         ...additionalFields
     });
 };

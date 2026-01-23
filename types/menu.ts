@@ -14,6 +14,10 @@ export enum MenuType {
 
 // 定义菜单请求体接口
 export interface CreateMenuRequestBody {
+    // 租户ID
+    tenantId: string;
+    // 应用ID
+    appId: string;
     // 菜单名称
     name: string;
     // 菜单类型
@@ -44,6 +48,10 @@ export interface UpdateMenuRequestBody extends Partial<CreateMenuRequestBody> {
 
 // 定义菜单查询参数接口
 export interface MenuQueryParams {
+    // 租户ID
+    tenantId: string;
+    // 应用ID
+    appId: string;
     // 菜单名称
     name?: string;
     // 菜单类型
@@ -58,6 +66,10 @@ export interface MenuQueryParams {
 export interface MenuResponse {
     // 菜单ID
     id: number;
+    // 租户ID
+    tenantId: string;
+    // 应用ID
+    appId: string;
     // 菜单名称
     name: string;
     // 菜单类型

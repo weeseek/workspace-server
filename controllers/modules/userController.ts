@@ -74,8 +74,16 @@ export async function registerUser(ctx: Context): Promise<void> {
         phone
     };
     
+    // 从请求体或上下文中获取tenantId
+    const tenantId = validatedBody.tenantId || ctx.state.tenantId;
+    
+    if (!tenantId) {
+        sendClientError(ctx, 'Tenant ID is required');
+        return;
+    }
+    
     try {
-        const user = await registerUserService(username, email, password, additionalFields);
+        const user = await registerUserService(username, email, password, tenantId, additionalFields);
         sendCreated(ctx, 'User registered successfully', { user: user.toJSON() });
     } catch (error) {
         sendClientError(ctx, (error as Error).message || 'Failed to register user');
